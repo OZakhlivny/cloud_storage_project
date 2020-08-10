@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="rootNode" alignment="CENTER" prefHeight="356.0" prefWidth="601.0" style="-fx-background-color: linear-gradient(#fff 0%, #eee 10%, #ddd 90%, #bbb 100%);" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ozakhlivny.cloudproject.client.MainWindowControllers">
+   <HBox prefHeight="37.0" prefWidth="601.0" VBox.vgrow="NEVER">
+      <children>
+         <Label prefHeight="31.0" prefWidth="308.0" text="Cloud" />
+         <Label text="User disk" />
+      </children>
+   </HBox>
+   <HBox prefHeight="100.0" prefWidth="601.0" VBox.vgrow="NEVER">
+      <children>
+         <HBox prefHeight="29.0" prefWidth="300.0">
+            <children>
+               <TextField prefHeight="27.0" prefWidth="260.0" />
+               <Button alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="40.0" text="Up" HBox.hgrow="NEVER" />
+            </children>
+         </HBox>
+         <HBox prefHeight="29.0" prefWidth="300.0">
+            <children>
+               <TextField fx:id="localDirectoryPath" prefHeight="27.0" prefWidth="260.0" />
+               <Button fx:id="localDirectoryUpButton" mnemonicParsing="false" onAction="#btnUpLocalDirectory" prefHeight="27.0" prefWidth="40.0" text="Up" HBox.hgrow="NEVER" />
+            </children>
+         </HBox>
+      </children>
+   </HBox>
+    <HBox alignment="CENTER" prefHeight="353.0" prefWidth="469.0">
+      <children>
+          <ListView fx:id="cloudDirectory" prefHeight="350.0" prefWidth="450.0" />
+          <ListView fx:id="localDirectory" prefHeight="350.0" prefWidth="450.0" />
+      </children>
+    </HBox>
+   <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="NEVER">
+      <children>
+           <Button alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="90.0" text="Cloud list" />
+           <Button alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="90.0" text="Upload" />
+           <Button alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="90.0" text="Download" />
+      </children>
+   </HBox>
+</VBox>
