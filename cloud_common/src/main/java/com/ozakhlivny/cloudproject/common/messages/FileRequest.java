@@ -1,4 +1,8 @@
-public class FileRequest extends AbstractMessage{
+package com.ozakhlivny.cloudproject.common.messages;
+
+import com.ozakhlivny.cloudproject.common.messages.AbstractMessage;
+
+public class FileRequest extends AbstractMessage {
     private String fileName;
 
     public FileRequest(String fileName) {

@@ -1,3 +1,5 @@
+import com.ozakhlivny.cloudproject.common.messages.FileMessage;
+import com.ozakhlivny.cloudproject.common.messages.FileRequest;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
