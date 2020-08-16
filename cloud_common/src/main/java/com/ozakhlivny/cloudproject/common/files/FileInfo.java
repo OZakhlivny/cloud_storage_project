@@ -6,6 +6,7 @@ import java.nio.file.Path;
 
 
 public class FileInfo {
+    private byte isFile;
     private String filename;
     private long size;
 
@@ -25,11 +26,25 @@ public class FileInfo {
         this.size = size;
     }
 
+    public byte getIsFile() {
+        return isFile;
+    }
+
+    public void setIsFile(byte isFile) {
+        this.isFile = isFile;
+    }
+
     public FileInfo(Path path) {
         try {
             filename = path.getFileName().toString();
-            if(Files.isDirectory(path)) size = -1L;
-            else size = Files.size(path);
+            if(Files.isDirectory(path)){
+                size = -1L;
+                isFile = 0;
+            }
+            else {
+                size = Files.size(path);
+                isFile = 1;
+            }
         } catch (IOException e) {
             throw new RuntimeException("Unable to create file info from path");
         }

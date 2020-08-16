@@ -35,6 +35,10 @@ public class MainWindowControllers implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        TableColumn<FileInfo, Byte> fileType = new TableColumn<>("");
+        fileType.setCellValueFactory(param -> new SimpleObjectProperty(param.getValue().getIsFile()));
+        fileType.setPrefWidth(0); fileType.setVisible(false);
+
         TableColumn<FileInfo, String> filenameColumn = new TableColumn<>("Name");
         filenameColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getFilename()));
         filenameColumn.setPrefWidth(280);
@@ -52,7 +56,7 @@ public class MainWindowControllers implements Initializable {
                     } else {
                         String text = String.format("%,d bytes", item);
                         if (item == -1L) {
-                            text = "[DIR]";
+                            text = "DIR";
                         }
                         setText(text);
                     }
@@ -61,8 +65,8 @@ public class MainWindowControllers implements Initializable {
         });
         fileSizeColumn.setPrefWidth(120);
 
-        localDirectory.getColumns().addAll(filenameColumn, fileSizeColumn);
-        localDirectory.getSortOrder().add(filenameColumn);
+        localDirectory.getColumns().addAll(fileType, filenameColumn, fileSizeColumn);
+        localDirectory.getSortOrder().addAll(fileType, filenameColumn);
 
         updateLocalDirectory(Paths.get(USER_LOCAL_DIRECTORY));
 
@@ -84,17 +88,10 @@ public class MainWindowControllers implements Initializable {
             try {
                 localDirectory.getItems().clear();
                 localDirectoryPath.setText(path.normalize().toAbsolutePath().toString());
-
                 localDirectory.getItems().addAll(Files.list(path)
-                        .filter(p->Files.isDirectory(p))
-                        .map(FileInfo::new).collect(Collectors.toList()));
-
-                localDirectory.getItems().addAll(Files.list(path)
-                        .filter(p->!Files.isDirectory(p))
                         .filter(p -> !p.getFileName().toString().equals(".DS_Store"))
                         .map(FileInfo::new).collect(Collectors.toList()));
-
-                //localDirectory.sort();
+                localDirectory.sort();
 
             } catch (IOException e) {
                 e.printStackTrace();
