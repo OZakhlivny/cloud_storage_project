@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox alignment="CENTER" prefHeight="150.0" prefWidth="300.0" spacing="5.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ozakhlivny.cloudproject.client.forms.AuthDialog">
+   <children>
+      <HBox prefHeight="30.0" prefWidth="300.0" VBox.vgrow="NEVER">
+         <children>
+            <Label alignment="CENTER" prefWidth="300.0" text="Input login and password" />
+         </children>
+      </HBox>
+      <HBox prefHeight="27.0" prefWidth="200.0">
+         <children>
+            <Label prefWidth="100.0" text="Login" />
+            <TextField fx:id="tfLogin" prefHeight="27.0" prefWidth="195.0" />
+         </children>
+      </HBox>
+      <HBox layoutX="10.0" layoutY="40.0" prefHeight="27.0" prefWidth="200.0">
+         <children>
+            <Label prefWidth="100.0" text="Password" HBox.hgrow="NEVER" />
+            <TextField fx:id="tfPassword" accessibleRole="PASSWORD_FIELD" prefHeight="27.0" prefWidth="195.0" HBox.hgrow="NEVER" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="54.0" prefWidth="300.0" spacing="10.0" VBox.vgrow="NEVER">
+         <children>
+            <Button mnemonicParsing="false" prefWidth="70.0" text="OK" HBox.hgrow="NEVER" />
+            <Button mnemonicParsing="false" prefWidth="70.0" text="Cancel" HBox.hgrow="NEVER" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

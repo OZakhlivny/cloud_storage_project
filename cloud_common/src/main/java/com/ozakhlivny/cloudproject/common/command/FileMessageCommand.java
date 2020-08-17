@@ -1,16 +1,14 @@
-package com.ozakhlivny.cloudproject.common.messages;
-
-import com.ozakhlivny.cloudproject.common.messages.AbstractMessage;
+package com.ozakhlivny.cloudproject.common.command;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class FileMessage extends AbstractMessage {
+public class FileMessageCommand extends Command {
     private String fileName;
     private byte[] data;
 
-    public FileMessage(Path path) throws IOException {
+    public FileMessageCommand(Path path) throws IOException {
         fileName = path.getFileName().toString();
         data = Files.readAllBytes(path);
     }

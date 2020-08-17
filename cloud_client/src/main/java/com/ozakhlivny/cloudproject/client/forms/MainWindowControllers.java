@@ -1,4 +1,4 @@
-package com.ozakhlivny.cloudproject.client;
+package com.ozakhlivny.cloudproject.client.forms;
 
 import com.ozakhlivny.cloudproject.common.files.FileInfo;
 import javafx.application.Platform;
@@ -7,12 +7,15 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +34,9 @@ public class MainWindowControllers implements Initializable {
 
     @FXML
     TextField localDirectoryPath;
+
+    @FXML
+    Button btLogin, btCloudList, btUpload, btDownload;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -81,6 +87,10 @@ public class MainWindowControllers implements Initializable {
                 }
             }
         });
+        btCloudList.setDisable(true);
+        btUpload.setDisable(true);
+        btDownload.setDisable(true);
+
     }
 
     public void updateLocalDirectory(Path path) {
@@ -104,5 +114,23 @@ public class MainWindowControllers implements Initializable {
         if (parentPath != null) {
             updateLocalDirectory(parentPath);
         }
+    }
+
+    public void btnLogin(ActionEvent actionEvent) {
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auth_dialog.fxml"));
+        try {
+            Parent dialog = fxmlLoader.load();
+            Stage stage = new Stage();
+            Scene scene = new Scene(dialog);
+            stage.setScene(scene);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(btLogin.getParent().getScene().getWindow());
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }
