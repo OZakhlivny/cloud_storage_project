@@ -39,7 +39,7 @@
    <HBox alignment="CENTER_RIGHT" fillHeight="false" prefHeight="27.0" prefWidth="1000.0" VBox.vgrow="NEVER">
       <children>
            <Button fx:id="btLogin" mnemonicParsing="false" onAction="#btnLogin" prefHeight="27.0" prefWidth="90.0" text="Login" HBox.hgrow="NEVER" />
-           <Button fx:id="btCloudList" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="90.0" text="Cloud list" HBox.hgrow="NEVER" />
+           <Button fx:id="btCloudList" alignment="CENTER" mnemonicParsing="false" onAction="#btnCloudList" prefHeight="27.0" prefWidth="90.0" text="Cloud list" HBox.hgrow="NEVER" />
            <Button fx:id="btUpload" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="90.0" text="Upload" HBox.hgrow="NEVER" />
            <Button fx:id="btDownload" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="90.0" text="Download" HBox.hgrow="NEVER" />
       </children>

@@ -12,4 +12,12 @@ public class FileMessageCommand extends Command {
         fileName = path.getFileName().toString();
         data = Files.readAllBytes(path);
     }
+
+    public String getFilename() {
+        return fileName;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
 }
