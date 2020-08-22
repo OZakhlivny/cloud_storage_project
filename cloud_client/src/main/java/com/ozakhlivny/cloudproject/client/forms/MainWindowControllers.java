@@ -1,5 +1,6 @@
 package com.ozakhlivny.cloudproject.client.forms;
 
+import com.ozakhlivny.cloudproject.client.controller.ClientController;
 import com.ozakhlivny.cloudproject.common.files.FileInfo;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -14,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -22,12 +24,14 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class MainWindowControllers implements Initializable {
-    public static final String USER_LOCAL_DIRECTORY = "/Users/oleg/Desktop/GeekBrains";
+
+    private ClientController clientController;
 
     @FXML
     TableView<FileInfo> localDirectory;
@@ -74,7 +78,7 @@ public class MainWindowControllers implements Initializable {
         localDirectory.getColumns().addAll(fileType, filenameColumn, fileSizeColumn);
         localDirectory.getSortOrder().addAll(fileType, filenameColumn);
 
-        updateLocalDirectory(Paths.get(USER_LOCAL_DIRECTORY));
+        updateLocalDirectory(Paths.get(clientController.USER_LOCAL_DIRECTORY));
 
         localDirectory.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -90,6 +94,8 @@ public class MainWindowControllers implements Initializable {
         btCloudList.setDisable(true);
         btUpload.setDisable(true);
         btDownload.setDisable(true);
+
+        clientController = new ClientController(this);
 
     }
 
@@ -120,17 +126,33 @@ public class MainWindowControllers implements Initializable {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auth_dialog.fxml"));
         try {
-            Parent dialog = fxmlLoader.load();
+            Parent root = fxmlLoader.load();
             Stage stage = new Stage();
-            Scene scene = new Scene(dialog);
+            Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btLogin.getParent().getScene().getWindow());
-            stage.show();
+            AuthDialog controller = (AuthDialog) fxmlLoader.getController();
+            stage.showAndWait();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Login to cloud");
+            alert.setHeaderText(null);
+            if(clientController.runAuthProcess(controller.getLogin(), controller.getPassword())){
+                alert.setContentText("Login is successful!");
+                btCloudList.setDisable(false);
+                btUpload.setDisable(false);
+                btDownload.setDisable(false);
+                clientController.runReadThread();
+            }
+            else alert.setContentText("Error in login or password!");
+            alert.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public void btnCloudList(ActionEvent actionEvent) {
 
     }
 }
