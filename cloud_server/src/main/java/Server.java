@@ -10,27 +10,27 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 
 public class Server {
-    public static int DEFAULT_SERVER_PORT = 8189;
-    public static int DATA_SIZE_MAX = 10485760;
 
     public void start() {
+
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workGroup = new NioEventLoopGroup();
 
         try {
+            ServerProperties properties = new ServerProperties();
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(
-                                    new ObjectDecoder(DATA_SIZE_MAX, ClassResolvers.cacheDisabled(null)),
+                                    new ObjectDecoder(properties.getMaxObjectSize(), ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
                                     new ServerHandler()
                             );
                         }
                     });
-            ChannelFuture channelFuture = bootstrap.bind(DEFAULT_SERVER_PORT).sync();
+            ChannelFuture channelFuture = bootstrap.bind(properties.getDefaultServerPort()).sync();
             channelFuture.channel().closeFuture().sync();
         }catch (Exception e){
             e.printStackTrace();

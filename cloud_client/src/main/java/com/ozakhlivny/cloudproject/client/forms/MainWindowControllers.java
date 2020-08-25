@@ -1,7 +1,7 @@
 package com.ozakhlivny.cloudproject.client.forms;
 
 import com.ozakhlivny.cloudproject.client.controller.ClientController;
-import com.ozakhlivny.cloudproject.common.files.FileInfo;
+import com.ozakhlivny.cloudproject.common.command.FileInfo;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,12 +10,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -24,8 +22,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -34,16 +31,18 @@ public class MainWindowControllers implements Initializable {
     private ClientController clientController;
 
     @FXML
-    TableView<FileInfo> localDirectory;
+    TableView<FileInfo> localDirectory, cloudDirectory;
 
     @FXML
-    TextField localDirectoryPath;
+    TextField localDirectoryPath, cloudDirectoryPath;
 
     @FXML
     Button btLogin, btCloudList, btUpload, btDownload;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        clientController = new ClientController(this);
 
         TableColumn<FileInfo, Byte> fileType = new TableColumn<>("");
         fileType.setCellValueFactory(param -> new SimpleObjectProperty(param.getValue().getIsFile()));
@@ -78,7 +77,7 @@ public class MainWindowControllers implements Initializable {
         localDirectory.getColumns().addAll(fileType, filenameColumn, fileSizeColumn);
         localDirectory.getSortOrder().addAll(fileType, filenameColumn);
 
-        updateLocalDirectory(Paths.get(clientController.USER_LOCAL_DIRECTORY));
+        updateLocalDirectory(Paths.get(clientController.getLocalUserDirectory()));
 
         localDirectory.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -91,11 +90,43 @@ public class MainWindowControllers implements Initializable {
                 }
             }
         });
+
+        TableColumn<FileInfo, Byte> cloudFileType = new TableColumn<>("");
+        cloudFileType.setCellValueFactory(param -> new SimpleObjectProperty(param.getValue().getIsFile()));
+        cloudFileType.setPrefWidth(0); cloudFileType.setVisible(false);
+
+        TableColumn<FileInfo, String> cloudFilenameColumn = new TableColumn<>("Name");
+        cloudFilenameColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getFilename()));
+        cloudFilenameColumn.setPrefWidth(280);
+
+        TableColumn<FileInfo, Long> cloudFileSizeColumn = new TableColumn<>("Size");
+        cloudFileSizeColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getSize()));
+        cloudFileSizeColumn.setCellFactory(column -> {
+            return new TableCell<FileInfo, Long>() {
+                @Override
+                protected void updateItem(Long item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        String text = String.format("%,d bytes", item);
+                        if (item == -1L) {
+                            text = "DIR";
+                        }
+                        setText(text);
+                    }
+                }
+            };
+        });
+        cloudFileSizeColumn.setPrefWidth(120);
+
+        cloudDirectory.getColumns().addAll(cloudFileType, cloudFilenameColumn, cloudFileSizeColumn);
+        cloudDirectory.getSortOrder().addAll(cloudFileType, cloudFilenameColumn);
+
         btCloudList.setDisable(true);
         btUpload.setDisable(true);
         btDownload.setDisable(true);
-
-        clientController = new ClientController(this);
 
     }
 
@@ -134,25 +165,73 @@ public class MainWindowControllers implements Initializable {
             stage.initOwner(btLogin.getParent().getScene().getWindow());
             AuthDialog controller = (AuthDialog) fxmlLoader.getController();
             stage.showAndWait();
+            clientController.runAuthProcess(controller.getLogin(), controller.getPassword());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void clientIsAuthorized() {
+        Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Login to cloud");
             alert.setHeaderText(null);
-            if(clientController.runAuthProcess(controller.getLogin(), controller.getPassword())){
+            if (clientController.isAuthorized()) {
                 alert.setContentText("Login is successful!");
                 btCloudList.setDisable(false);
                 btUpload.setDisable(false);
                 btDownload.setDisable(false);
-                clientController.runReadThread();
+                clientController.getCloudList();
+            } else {
+                alert.setContentText("Error in login or password!");
+                btCloudList.setDisable(true);
+                btUpload.setDisable(true);
+                btDownload.setDisable(true);
             }
-            else alert.setContentText("Error in login or password!");
             alert.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        });
     }
 
     public void btnCloudList(ActionEvent actionEvent) {
+        clientController.getCloudList();
+    }
 
+    public void updateCloudDirectory(List<FileInfo> cloudFileList) {
+        Platform.runLater(() -> {
+            cloudDirectory.getItems().clear();
+            cloudDirectoryPath.setText(clientController.getUserName());
+            cloudDirectory.getItems().addAll(cloudFileList);
+            cloudDirectory.sort();
+        });
+    }
+
+    public void btnUpload(ActionEvent actionEvent) {
+        if(localDirectory.getSelectionModel().getSelectedItem() != null) {
+            if(localDirectory.getSelectionModel().getSelectedItem().getIsFile() == 0) {
+                showErrorAlert("Select file not directory!");
+                return;
+            }
+            clientController.uploadFile(localDirectory.getSelectionModel().getSelectedItem().getFilename(),
+                    localDirectoryPath.getText(), cloudDirectoryPath.getText());
+        }
+    }
+
+    public void btnDownload(ActionEvent actionEvent) {
+        if(cloudDirectory.getSelectionModel().getSelectedItem() != null){
+            if(cloudDirectory.getSelectionModel().getSelectedItem().getIsFile() == 0) {
+                showErrorAlert("Select file not directory!");
+                return;
+            }
+            clientController.downloadFile(cloudDirectory.getSelectionModel().getSelectedItem().getFilename(),
+                    cloudDirectoryPath.getText(), localDirectoryPath.getText());
+        }
+    }
+
+    public void showErrorAlert(String message){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error!");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
