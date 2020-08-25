@@ -1,11 +1,13 @@
-package com.ozakhlivny.cloudproject.common.files;
+package com.ozakhlivny.cloudproject.common.command;
+
+import com.ozakhlivny.cloudproject.common.command.Command;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 
-public class FileInfo {
+public class FileInfo extends Command {
     private byte isFile;
     private String filename;
     private long size;
@@ -49,4 +51,6 @@ public class FileInfo {
             throw new RuntimeException("Unable to create file info from path");
         }
     }
+
+    public FileInfo(){}
 }

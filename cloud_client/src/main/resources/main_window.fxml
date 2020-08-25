@@ -18,8 +18,8 @@
       <children>
          <HBox prefHeight="27.0" prefWidth="500.0">
             <children>
-               <TextField prefHeight="27.0" prefWidth="460.0" />
-               <Button alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="40.0" text="Up" HBox.hgrow="NEVER" />
+               <TextField fx:id="cloudDirectoryPath" prefHeight="27.0" prefWidth="460.0" />
+               <Button fx:id="cloudDirectoryUpButton" alignment="CENTER" disable="true" mnemonicParsing="false" prefHeight="27.0" prefWidth="40.0" text="Up" HBox.hgrow="NEVER" />
             </children>
          </HBox>
          <HBox prefHeight="27.0" prefWidth="500.0">
@@ -40,8 +40,8 @@
       <children>
            <Button fx:id="btLogin" mnemonicParsing="false" onAction="#btnLogin" prefHeight="27.0" prefWidth="90.0" text="Login" HBox.hgrow="NEVER" />
            <Button fx:id="btCloudList" alignment="CENTER" mnemonicParsing="false" onAction="#btnCloudList" prefHeight="27.0" prefWidth="90.0" text="Cloud list" HBox.hgrow="NEVER" />
-           <Button fx:id="btUpload" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" prefWidth="90.0" text="Upload" HBox.hgrow="NEVER" />
-           <Button fx:id="btDownload" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="90.0" text="Download" HBox.hgrow="NEVER" />
+           <Button fx:id="btUpload" alignment="CENTER" mnemonicParsing="false" onAction="#btnUpload" prefHeight="27.0" prefWidth="90.0" text="Upload" HBox.hgrow="NEVER" />
+           <Button fx:id="btDownload" alignment="CENTER" contentDisplay="CENTER" onAction="#btnDownload" prefHeight="27.0" prefWidth="90.0" text="Download" HBox.hgrow="NEVER" />
       </children>
    </HBox>
 </VBox>
